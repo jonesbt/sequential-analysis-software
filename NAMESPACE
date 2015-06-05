@@ -1,5 +1,5 @@
 ## Import the packages
-import()
+import(igraph)
 
 ## Export general functions
-export(obj_fn_probabilities)
+export(generate_conn_mat, obj_fn_probabilities)
