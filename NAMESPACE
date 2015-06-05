@@ -2,4 +2,4 @@
 import()
 
 ## Export general functions
-export()
+export(obj_fn_probabilities)
