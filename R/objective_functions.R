@@ -22,15 +22,12 @@ compute_prob = function(alpha_0, alpha_i, delta) {
 #' destinations. alphas[i,j] is x[i,j] as described in the manuscript text.
 #' 
 #' The following arguments should be in obj_fn_args.
-#' \param by_site Should the costs be computed for each site, or overall?
 #' \param delta The threshold for "irrelevant" connections.
 #' \param epsilon The threshold for stopping.
 #' \param pi The probability that a connection must be "irrelevant" for it to
 #' be ignored.
-#' \return Either a single value (if by_site is false), or a vector of length m
-#' with the cost for each site (if by_site is true) for the objective function.
+#' \return The value of the objective function.
 obj_fn_probabilities = function(alphas, obj_fn_args) {
-    by_site = obj_fn_args$by_site
     delta = obj_fn_args$delta
     epsilon = obj_fn_args$epsilon
     pi = obj_fn_args$pi
@@ -60,7 +57,5 @@ obj_fn_probabilities = function(alphas, obj_fn_args) {
         site_costs[i] = max_cv
     }
     # Now return the result.
-    if(by_site)
-        return(site_costs)
     return(max(site_costs))    
 }

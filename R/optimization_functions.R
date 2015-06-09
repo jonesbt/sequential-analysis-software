@@ -44,7 +44,7 @@ optimization_heuristic = function(alphas, n,
     release_distribution = integer(nrow(alphas))
     # Compute the costs for the first iteration.
     costs = sapply(seq(nrow(alphas)), function(j)
-        compute_exp_cost(alphas[j,], block_size, obj_fn, obj_fn_args)
+        compute_exp_cost(alphas[j,], block_size, obj_fn, obj_fn_args))
     # Create the prior connectivity matrix. This is updated every timestep.
     P = alphas
     for(i in seq(1, n, by=block_size)) {

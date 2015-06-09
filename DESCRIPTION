@@ -5,7 +5,7 @@ Title: Sequential Analysis Supplementary Materials
 Authors@R: c(person("Benjamin", "Jones", role = c("aut", "cre"),
     email = "btjones16@gmail.com"),
     person("Andrew", "Solow", role=c("aut")),
-    person("Rubao", "Ji", role=c("aut"))
+    person("Rubao", "Ji", role=c("aut")))
 Author: Benjamin Jones [aut, cre]
 Maintainer: Benjamin Jones <btjones@mit.edu>
 Depends: 

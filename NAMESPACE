@@ -2,4 +2,4 @@
 import(gtools, igraph)
 
 ## Export general functions
-export(generate_conn_mat, obj_fn_probabilities, optimization_hueristic)
+export(generate_conn_mat, obj_fn_probabilities, optimization_heuristic)
