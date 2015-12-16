@@ -7,18 +7,22 @@
 #' \param obj_fn_args Arguments to pass to the objective function.
 #' \return The expected posterior value of the objective function.
 compute_exp_cost = function(alphas, n, obj_fn, obj_fn_args) {
-    alphas = matrix(alphas, nrow=1)
-    orig_alphas = alphas
-    n_reps = 1e2
+    ## Save the original parameters.
+    orig_alphas = matrix(alphas, nrow=1)
+    n_reps = 2.5e2
     # Compute the C.V. for each p_{ij}.
     costs = numeric(n_reps)
-    for(i in seq(n_reps)) {
+    for(r in seq(n_reps)) {
+        ## Restore the original values of alpha.
         alphas = orig_alphas
-        # Generate a random sample for where these particles go.
-        dest = rmultinom(1, n, alphas / sum(alphas))
+        ## Generate a probability vector.
+        p = rdirichlet(1, alphas)
+        ## Generate a random sample for where these particles go.
+        dest = rmultinom(1, n, p)
+        ## Update the alphas.
         alphas = alphas + t(dest)
         # Now compute the cost on the updated alphas.
-        costs[i] = obj_fn(alphas, obj_fn_args)
+        costs[r] = obj_fn(alphas, obj_fn_args)
     }
     return(mean(costs))
 }
@@ -40,28 +44,38 @@ compute_exp_cost = function(alphas, n, obj_fn, obj_fn_args) {
 #' posterior cost from using this distribution (cost).
 optimization_heuristic = function(alphas, n, 
     obj_fn, obj_fn_args, block_size=1) {
-    # Initially create an empty distribution.
+    ## Initially create an empty distribution.
     release_distribution = integer(nrow(alphas))
-    # Compute the costs for the first iteration.
-    costs = sapply(seq(nrow(alphas)), function(j)
+    ## Create a vector to store the costs and the allocation info.
+    release_site = NA
+    ## Compute the initial costs.
+    prior_costs = obj_fn_probabilities(alphas, by_site=TRUE, obj_fn_args)
+    exp_costs = sapply(seq(nrow(alphas)), function(j)
         compute_exp_cost(alphas[j,], block_size, obj_fn, obj_fn_args))
-    # Create the prior connectivity matrix. This is updated every timestep.
-    P = alphas
+    ## Iterate through the particles.
     for(i in seq(1, n, by=block_size)) {
-        # Release the particle from the site with the highest cost.
-        release_site = which.max(costs)
+        ## Update the costs if necessary.
+        if(!is.na(release_site)) {
+            prior_costs[release_site] = exp_costs[release_site]
+            exp_costs[release_site] =
+                compute_exp_cost(alphas[release_site,],
+                                 release_distribution[release_site] +block_size,
+                                 obj_fn, obj_fn_args)
+        }
+        costs = sapply(seq(length(exp_costs)), function(i) {
+            x = apply(cbind(prior_costs, exp_costs), 1, max)
+            x[i] = exp_costs[i]
+            return(max(x))
+        })
+        release_site = which(costs == min(costs))
+        if(length(release_site) > 1) {
+            release_site = which.max(prior_costs)
+        }
+        ## Release the particle from the site that minimizes the expected cost.
         release_distribution[release_site] =
             release_distribution[release_site] + block_size
-        # Normalize the probabilities and update the alphas based on the
-        # expected cost.
-        for(j in seq(nrow(P)))
-            P[release_site,] = (alphas[release_site,] ) /
-                sum(alphas[release_site,] )
-        alphas[release_site, ] = alphas[release_site, ] +
-            P[release_site, ]
-        costs[release_site] = compute_exp_cost(alphas[release_site,],
-             block_size, obj_fn, obj_fn_args)
     }
+    ## Uniformly allocate any remaining particles.
     i = 1
     while(sum(release_distribution) < n) {
         release_distribution[i] = release_distribution[i] + 1
@@ -69,5 +83,6 @@ optimization_heuristic = function(alphas, n,
         if(i > length(release_distribution))
             i = 1
     }
+    ## Return the result.
     return(list(dist=release_distribution, cost=max(costs)))
 }

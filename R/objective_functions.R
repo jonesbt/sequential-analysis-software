@@ -46,11 +46,10 @@ compute_prob = function(alpha_0, alpha_i, delta) {
 #' \param pi The probability that a connection must be "irrelevant" for it to
 #' be ignored.
 #' \return The value of the objective function.
-obj_fn_probabilities = function(alphas, obj_fn_args) {
+obj_fn_probabilities = function(alphas, obj_fn_args, by_site=FALSE) {
     delta = obj_fn_args$delta
     epsilon = obj_fn_args$epsilon
     pi = obj_fn_args$pi
-    by_site = obj_fn_args$by_site
     # Compute the C.V. for each p_{ij}.
     cvs = matrix(NA, nrow(alphas), ncol(alphas))
     for(i in seq(nrow(alphas)))
