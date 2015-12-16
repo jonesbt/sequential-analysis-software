@@ -1,6 +1,6 @@
 Package: jsj2015
-Version: 2015-06.05
-Date: 2015-06-05
+Version: 2015-12.16
+Date: 2015-12-16
 Title: Sequential Analysis Supplementary Materials
 Authors@R: c(person("Benjamin", "Jones", role = c("aut", "cre"),
     email = "btjones16@gmail.com"),

@@ -1,12 +1,31 @@
-#' Computes the coefficient of variance for a beta distribution with shape
-#' parameters alpha and beta - alpha. This function is private to this file.
+#' Compute the mean of a beta distribution with parameters alpha and beta. This
+#' function is private to this file.
+#' \param alpha The first shape parameter of the beta distribution.
+#' \param beta The second shape parameter of the beta distribution.
+#' \return The expected value for the beta distribution.
+mu.beta <- function(alpha, beta) {
+    return(alpha / (alpha + beta))
+}
+
+#' Compute the standard deviation of a beta distribution with parameters alpha
+#' and beta. This function is private to this file.
+#' \param alpha The first shape parameter of the beta distribution.
+#' \param beta The second shape parameter of the beta distribution.
+#' \return The standard deviation for the beta distribution.
+sd.beta <- function(alpha, beta) {
+    return(sqrt((alpha * beta) /
+                ((alpha + beta)^2 * (alpha + beta + 1))))
+}
+
+#' Computes the coefficient of variance for a beta distribution with
+#' parameters alpha and beta. This function is private to this file.
+#' \param alpha The first shape parameter of the beta distribution.
+#' \param beta The second shape parameter of the beta distribution.
+#' \return The standard deviation for the beta distribution.
 cv.beta <- function(alpha, beta) {
     if(beta < alpha)
-        stop('beta must be greater than alpha for a real answer.')
-    if(alpha == 0 || beta <= 1)
-        return(NA)
-    return(sqrt((beta - alpha) / 
-                (alpha * (beta - 1))))
+        stop('beta must be greater than alpha for a meaningful answer.')
+    return(sd.beta(alpha, beta) / mu.beta(alpha, beta))
 }
 
 #' Computes 1 - f(delta, alpha_i, alpha_0), where f(delta, alpha_i, alpha_0)
@@ -31,12 +50,13 @@ obj_fn_probabilities = function(alphas, obj_fn_args) {
     delta = obj_fn_args$delta
     epsilon = obj_fn_args$epsilon
     pi = obj_fn_args$pi
+    by_site = obj_fn_args$by_site
     # Compute the C.V. for each p_{ij}.
     cvs = matrix(NA, nrow(alphas), ncol(alphas))
     for(i in seq(nrow(alphas)))
         for(j in seq(ncol(alphas)))
             if((alphas[i,j] / sum(alphas[i,])) > delta)
-                cvs[i,j] = cv.beta(alphas[i,j], sum(alphas[i,]))
+                cvs[i,j] = cv.beta(alphas[i,j], sum(alphas[i,]) - alphas[i,j])
     # Compute the probability that each p_{ij} > delta.
     probs = matrix(NA, nrow(alphas), ncol(alphas))
     for(i in seq(nrow(alphas)))
@@ -57,5 +77,7 @@ obj_fn_probabilities = function(alphas, obj_fn_args) {
         site_costs[i] = max_cv
     }
     # Now return the result.
+    if(by_site)
+        return(site_costs)
     return(max(site_costs))    
 }
