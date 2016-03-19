@@ -1,17 +1,17 @@
 #' Compute the mean of a beta distribution with parameters alpha and beta. This
 #' function is private to this file.
-#' \param alpha The first shape parameter of the beta distribution.
-#' \param beta The second shape parameter of the beta distribution.
-#' \return The expected value for the beta distribution.
+#' @param alpha The first shape parameter of the beta distribution.
+#' @param beta The second shape parameter of the beta distribution.
+#' @return The expected value for the beta distribution.
 mu.beta <- function(alpha, beta) {
     return(alpha / (alpha + beta))
 }
 
 #' Compute the standard deviation of a beta distribution with parameters alpha
 #' and beta. This function is private to this file.
-#' \param alpha The first shape parameter of the beta distribution.
-#' \param beta The second shape parameter of the beta distribution.
-#' \return The standard deviation for the beta distribution.
+#' @param alpha The first shape parameter of the beta distribution.
+#' @param beta The second shape parameter of the beta distribution.
+#' @return The standard deviation for the beta distribution.
 sd.beta <- function(alpha, beta) {
     return(sqrt((alpha * beta) /
                 ((alpha + beta)^2 * (alpha + beta + 1))))
@@ -19,12 +19,10 @@ sd.beta <- function(alpha, beta) {
 
 #' Computes the coefficient of variance for a beta distribution with
 #' parameters alpha and beta. This function is private to this file.
-#' \param alpha The first shape parameter of the beta distribution.
-#' \param beta The second shape parameter of the beta distribution.
-#' \return The standard deviation for the beta distribution.
+#' @param alpha The first shape parameter of the beta distribution.
+#' @param beta The second shape parameter of the beta distribution.
+#' @return The standard deviation for the beta distribution.
 cv.beta <- function(alpha, beta) {
-    if(beta < alpha)
-        stop('beta must be greater than alpha for a meaningful answer.')
     return(sd.beta(alpha, beta) / mu.beta(alpha, beta))
 }
 
@@ -37,15 +35,16 @@ compute_prob = function(alpha_0, alpha_i, delta) {
 
 #' Compute the objective function that is described in the text.
 #'
-#' \param alphas An m-by-k matrix for a system with m origins and k
+#' @param alphas An m-by-k matrix for a system with m origins and k
 #' destinations. alphas[i,j] is x[i,j] as described in the manuscript text.
 #' 
 #' The following arguments should be in obj_fn_args.
-#' \param delta The threshold for "irrelevant" connections.
-#' \param epsilon The threshold for stopping.
-#' \param pi The probability that a connection must be "irrelevant" for it to
+#' @param delta The threshold for "irrelevant" connections.
+#' @param epsilon The threshold for stopping.
+#' @param pi The probability that a connection must be "irrelevant" for it to
 #' be ignored.
-#' \return The value of the objective function.
+#' @return The value of the objective function.
+#' @export
 obj_fn_probabilities = function(alphas, obj_fn_args, by_site=FALSE) {
     delta = obj_fn_args$delta
     epsilon = obj_fn_args$epsilon

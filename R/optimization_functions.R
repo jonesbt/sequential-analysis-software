@@ -1,11 +1,11 @@
 #' Computes the expected posterior value of the objective function.
 #' This function is private to this file.
 #' 
-#' \param alphas A row vector from the matrix alphas given in the text.
-#' \param n The number of new tracers to release.
-#' \param obj_fn The objective function.
-#' \param obj_fn_args Arguments to pass to the objective function.
-#' \return The expected posterior value of the objective function.
+#' @param alphas A row vector from the matrix alphas given in the text.
+#' @param n The number of new tracers to release.
+#' @param obj_fn The objective function.
+#' @param obj_fn_args Arguments to pass to the objective function.
+#' @return The expected posterior value of the objective function.
 compute_exp_cost = function(alphas, n, obj_fn, obj_fn_args) {
     ## Save the original parameters.
     orig_alphas = matrix(alphas, nrow=1)
@@ -32,16 +32,17 @@ compute_exp_cost = function(alphas, n, obj_fn, obj_fn_args) {
 #' allocating the particle to each node. We then assign the particle to the
 #' site with the lowest of these values.
 #'
-#' \param alphas The matrix alpha as described in the manuscript text.
-#' \param n The number of new tracers to allocate.
-#' \param obj_fn The objective function to optimize over.
-#' \param obj_fn_args Arguments to pass to the objective function.
-#' \param block_size An optional number of tracers to allocate as a single
+#' @param alphas The matrix alpha as described in the manuscript text.
+#' @param n The number of new tracers to allocate.
+#' @param obj_fn The objective function to optimize over.
+#' @param obj_fn_args Arguments to pass to the objective function.
+#' @param block_size An optional number of tracers to allocate as a single
 #' block. The algorithm is approximately linear with respect to the number of
 #' blocks, so setting a block size greater than 1 can be useful for reducing
 #' runtime with very large number of tracers.
-#' \return A list with the release distribution (dist) and the expected
+#' @return A list with the release distribution (dist) and the expected
 #' posterior cost from using this distribution (cost).
+#' @export
 optimization_heuristic = function(alphas, n, 
     obj_fn, obj_fn_args, block_size=1) {
     ## Initially create an empty distribution.

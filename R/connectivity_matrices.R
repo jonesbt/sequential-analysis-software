@@ -33,13 +33,46 @@ generate_conn_mat_unif = function(adj_mat) {
 
 #' Generates a connectivity matrix as described in the manuscript text.
 #'
-#' \param n_sites The number of sites. This should be a perfect square
+#' @param n_sites The number of sites. This should be a perfect square
 #' (4, 9, ...).
-#' \param topology_params A list with elements p and nei, which are passed
+#' @param topology_params A list with elements p and nei, which are passed
 #' through to igraph::watts.strogatz.game().
+#' @export
 generate_conn_mat = function(n_sites, topology_params=NULL) {
     # Generate the adjacency matrix.
     adj_mat = generate_adj_mat_small_world(n_sites, topology_params)
     # Generate the connectivity matrix.
     return(generate_conn_mat_unif(adj_mat))
+}
+
+#' \todo Add test that this is accurately simulating the matrix.
+sample_conn_mat = function(conn_mat, origin, n) {
+    return(apply(rmultinom(n, 1, conn_mat[origin,]), 2,
+                 function(x) which(x == 1)))
+}
+
+#' @export
+normalize_distribution = function(dist, n) {
+    dist = floor(dist)
+    i = 1
+    while(sum(dist) < n) {
+        dist[i] = dist[i] + 1
+        i = i + i
+        if(i > length(dist))
+            i = 1
+    }
+    return(dist)
+}
+
+#' @export
+update_alphas = function(alphas, data, start, count) {
+    # Compute the ending sample to use.
+    end = start + count - 1
+    # Update alphas in place.
+    for(i in seq(nrow(alphas)))
+        if(count[i] > 0)
+            for(j in seq(ncol(alphas)))
+                alphas[i,j] = alphas[i,j] + sum(data[i,start[i]:end[i]] == j)
+    # Return the results including the next starting count.
+    return(list(alphas=alphas, start=end + 1))
 }
