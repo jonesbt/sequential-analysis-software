@@ -9,3 +9,12 @@
 
 # RStudio files
 .Rproj.user/
+
+# Object and binary files.
+*.o
+src/test_sequential_analysis
+src/libsequentialanalysis.so
+
+# Swig generated files.
+src/sequential_analysis_wrap.cxx
+src/sequential_analysis.py
