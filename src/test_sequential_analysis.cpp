@@ -9,6 +9,7 @@ public:
   std::vector<std::string> origins;
   std::vector<std::string> destinations;
   std::vector< std::vector<int> > counts;
+  std::vector<int> allocation = {43, 228, 229};
   ConnectivityMatrix conn_mat;
 };
 
@@ -92,6 +93,17 @@ BOOST_FIXTURE_TEST_CASE(obj_fn_cv_args, ConnectivityMatrixFixture) {
 /** Tests that ConnectivityMatrix::allocate() assigns the correct number of 
  * particles to each origin. */
 BOOST_FIXTURE_TEST_CASE(allocate, ConnectivityMatrixFixture) {
+  /* Create an allocation of particles and check it. */
+  std::vector<uint> unif_allocation = {167, 167, 166};
+  std::vector<uint> new_allocation = conn_mat.allocate(500);
+  BOOST_CHECK_EQUAL_COLLECTIONS(new_allocation.begin(), new_allocation.end(),
+				unif_allocation.begin(), unif_allocation.end());
+  /* Update the connectivity matrix then create a new allocation and check it.*/
+  conn_mat.update(counts);
+  new_allocation = conn_mat.allocate(500);
+  BOOST_CHECK_EQUAL_COLLECTIONS(new_allocation.begin(), new_allocation.end(),
+				allocation.begin(), allocation.end());
+  
 }
 BOOST_AUTO_TEST_SUITE_END()
 
