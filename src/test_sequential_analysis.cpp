@@ -72,12 +72,26 @@ BOOST_FIXTURE_TEST_CASE(conn_mat_update, ConnectivityMatrixFixture) {
   
 }
 /** Tests that the objective function returns the correct value. */
-BOOST_FIXTURE_TEST_CASE(obj_fn_val, ConnectivityMatrixFixture) {}
+BOOST_FIXTURE_TEST_CASE(obj_fn_cv_val, ConnectivityMatrixFixture) {
+  /* Check the value with the empty connectivity matrix. */
+  BOOST_CHECK_CLOSE(conn_mat.obj_fn_cv(), 0.8164966, 0.01);
+  /* Update the matrix, then check the new value. */
+  conn_mat.update(counts);
+  BOOST_CHECK_CLOSE(conn_mat.obj_fn_cv(), 0.9942028, 0.01);
+}
+
 /** Tests that set_obj_fn_cv_args sets the correct arguments for the objective 
  * function. */
-BOOST_FIXTURE_TEST_CASE(obj_fn_args, ConnectivityMatrixFixture) {}
+BOOST_FIXTURE_TEST_CASE(obj_fn_cv_args, ConnectivityMatrixFixture) {
+  /* Update the matrix, then check the new value. */
+  conn_mat.update(counts);
+  conn_mat.set_obj_fn_cv_args(0.05, 0.01);
+  BOOST_CHECK_CLOSE(conn_mat.obj_fn_cv(), 0.2373992, 0.0001);
+}
+
 /** Tests that ConnectivityMatrix::allocate() assigns the correct number of 
  * particles to each origin. */
-BOOST_FIXTURE_TEST_CASE(allocate, ConnectivityMatrixFixture) {}
+BOOST_FIXTURE_TEST_CASE(allocate, ConnectivityMatrixFixture) {
+}
 BOOST_AUTO_TEST_SUITE_END()
 
