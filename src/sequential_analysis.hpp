@@ -31,9 +31,8 @@ public:
     return std::vector<uint>(origins.size(), 0);
   }
   
-  std::vector< std::vector<int> > get_counts() {
-    return std::vector< std::vector<int> >(origins.size(),
-					   std::vector<int>(destinations.size(), 0));
+  inline std::vector< std::vector<int> > get_counts() const {
+    return this->counts;
   }
   
   /** Computes the coefficient of variance based objective function as given
@@ -58,7 +57,7 @@ public:
    * \param The newly observed counts, where counts[i][j] gives the number of 
    * particles released from origin i and arriving at destination j.
    */
-  void update(const std::vector< std::vector<int> > counts) {}
+  void update(const std::vector< std::vector<int> > counts);
 private:
   /** The origin sites. */
   std::vector<std::string> origins;
