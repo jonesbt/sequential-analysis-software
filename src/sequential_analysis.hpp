@@ -40,7 +40,7 @@ public:
    *
    * max_{i,j}(CV_{ij} : Prob(P_{ij} > delta) > pi)
    */
-  double obj_fn_cv() { return 0.; }
+  double obj_fn_cv();
   
   /** Sets the arguments of the coefficient of variance based objective 
    * function. 
@@ -49,7 +49,7 @@ public:
    * \param pi The parameter pi for ConnectivityMatrix::obj_fn_cv().
    * \see ConnectivityMatrix::obj_fn_cv()
    */
-  void set_obj_fn_cv_args(const double delta, const double pi) {}
+  void set_obj_fn_cv_args(const double delta, const double pi);
   
   /** Updates the connectivity matrix to include the newly observed data by 
    * adding the counts to the existing ones. 
