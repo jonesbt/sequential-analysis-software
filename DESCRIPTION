@@ -9,8 +9,8 @@ Authors@R: c(person("Benjamin", "Jones", role = c("aut", "cre"),
 Author: Benjamin Jones [aut, cre]
 Maintainer: Benjamin Jones <btjones@mit.edu>
 Depends:
-    R (>= 3.0.2)
     gtools
+    R (>= 3.0.2)
 Description: This package contains supplementary materials for the manuscript
     by Jones, Solow, and Ji that has been submitted to the Journal of
     Atmospheric and Oceanic Technology.
