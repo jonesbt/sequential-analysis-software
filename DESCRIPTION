@@ -10,6 +10,7 @@ Author: Benjamin Jones [aut, cre]
 Maintainer: Benjamin Jones <btjones@mit.edu>
 Depends:
     R (>= 3.0.2)
+    gtools
 Description: This package contains supplementary materials for the manuscript
     by Jones, Solow, and Ji that has been submitted to the Journal of
     Atmospheric and Oceanic Technology.
@@ -22,8 +23,6 @@ Collate:
     'connectivity_matrices.R'
     'objective_functions.R'
     'optimization_functions.R'
-Depends:
-    gtools
 Suggests:
     testthat
 RoxygenNote: 5.0.1
