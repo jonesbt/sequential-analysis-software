@@ -27,11 +27,12 @@ public:
    * \return A vector giving the number of particles to release from each origin
    * site.
    */
-  std::vector<uint> allocate(const uint n) {
-    return std::vector<uint>(origins.size(), 0);
-  }
-  
-  inline std::vector< std::vector<int> > get_counts() const {
+  std::vector<uint> allocate(const uint n);
+
+  /** Returns the matrix of counts. Each element count[i][j] is equal to the 
+   * total number of particles that were released from origin i and arrived at
+   * destination j. */
+  inline std::vector< std::vector<uint> > get_counts() const {
     return this->counts;
   }
   
@@ -57,15 +58,47 @@ public:
    * \param The newly observed counts, where counts[i][j] gives the number of 
    * particles released from origin i and arriving at destination j.
    */
-  void update(const std::vector< std::vector<int> > counts);
+  void update(const std::vector< std::vector<uint> > counts);
 private:
+  /** Creates a copy of this connectivity matrix. */
+  ConnectivityMatrix(const ConnectivityMatrix &conn_mat);
+  /** Uniformly allocates the particles across the origin sites. 
+   *
+   * \param n The number of particles to allocate.
+   */
+  std::vector<uint> allocate_uniform(const uint n);
+  /** Allocates the particles across the origin sites, attempting to minimize 
+   * the posterior expected value of the objective function.
+   *
+   * \param n The number of particles to allocate.
+   */
+  std::vector<uint> allocate_optimized(const uint n);
+  /** Computes the expected value of the objective function if n additional
+   * particles were to be allocated from origin i. 
+   * 
+   * \param i The release site for the new particles.
+   * \param n The number of new particles to release.
+   */
+  double expected_obj_fn_cv(const uint i, const uint n);
+  /** Computes the coefficient of variation based objective function for origin
+   * i. See ConnectivityMatrix::obj_fn_cv() for details. 
+   *
+   * \param i The origin for which the objective function should be computed.
+   */
+  double obj_fn_cv(const uint i);
+  /* Returns the origin sites. */
+  inline std::vector<std::string> get_origins() const { return origins; }
+  /* Returns the destination sites. */
+  inline std::vector<std::string> get_destinations() const {
+    return destinations;
+  }
   /** The origin sites. */
   std::vector<std::string> origins;
   /** The destination sites. */
   std::vector<std::string> destinations;
   /** The counts. counts[i][j] is the number of particles released from origin
    * i that arrived at destination j. */
-  std::vector< std::vector<int> > counts;
+  std::vector< std::vector<uint> > counts;
   /** The parameter delta for ConnectivityMatrix::obj_fn_cv(). */
   double delta;
   /** The parameter pi for ConnectivityMatrix::obj_fn_cv(). */

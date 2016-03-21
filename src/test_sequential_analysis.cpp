@@ -8,8 +8,8 @@ public:
   ConnectivityMatrixFixture();
   std::vector<std::string> origins;
   std::vector<std::string> destinations;
-  std::vector< std::vector<int> > counts;
-  std::vector<int> allocation = {43, 228, 229};
+  std::vector< std::vector<uint> > counts;
+  std::vector<uint> allocation = {41, 229, 230};
   ConnectivityMatrix conn_mat;
 };
 
@@ -44,7 +44,7 @@ ConnectivityMatrixFixture::ConnectivityMatrixFixture() {
 BOOST_AUTO_TEST_SUITE(connectivity_matrix)
 /** Tests that the connectivity matrix has the correct dimensions. */
 BOOST_FIXTURE_TEST_CASE(conn_mat_dim, ConnectivityMatrixFixture) {
-  const std::vector< std::vector<int> > counts = conn_mat.get_counts();
+  const std::vector< std::vector<uint> > counts = conn_mat.get_counts();
   BOOST_CHECK_EQUAL(counts.size(), origins.size());
   for(uint i = 0; i < counts.size(); ++i)
     BOOST_CHECK_EQUAL(counts[i].size(), destinations.size());
@@ -52,9 +52,9 @@ BOOST_FIXTURE_TEST_CASE(conn_mat_dim, ConnectivityMatrixFixture) {
 
 /** Tests that the connectivity matrix is initialized with the correct values.*/
 BOOST_FIXTURE_TEST_CASE(conn_mat_counts, ConnectivityMatrixFixture) {
-  const std::vector< std::vector<int> > counts = conn_mat.get_counts();
+  const std::vector< std::vector<uint> > counts = conn_mat.get_counts();
   for(uint i = 0; i < counts.size(); ++i) {
-    std::vector<int> zeros(counts[i].size(), 0);
+    std::vector<uint> zeros(counts[i].size(), 0);
     BOOST_CHECK_EQUAL_COLLECTIONS(counts[i].begin(), counts[i].end(),
 				  zeros.begin(), zeros.end());
   }
@@ -64,7 +64,7 @@ BOOST_FIXTURE_TEST_CASE(conn_mat_counts, ConnectivityMatrixFixture) {
 BOOST_FIXTURE_TEST_CASE(conn_mat_update, ConnectivityMatrixFixture) {
   /* Call update, then load the new counts. */
   conn_mat.update(counts);
-  std::vector< std::vector<int> > new_counts = conn_mat.get_counts();
+  std::vector< std::vector<uint> > new_counts = conn_mat.get_counts();
   /* Check that values. */
   for(uint i = 0; i < counts.size(); ++i) {
     BOOST_CHECK_EQUAL_COLLECTIONS(new_counts[i].begin(), new_counts[i].end(),

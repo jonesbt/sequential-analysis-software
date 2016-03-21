@@ -1,7 +1,12 @@
 .DEFAULT_GOAL = lib
 
 CXX = clang++
-CXXFLAGS = -Wall -std=c++11
+CXXFLAGS = -Wall -std=c++11 
+LDFLAGS = 
+
+CXXFLAGS += $(shell pkg-config --cflags gsl)
+LDFLAGS += $(shell pkg-config --libs gsl)
+
 BOOST_TEST_CXXFLAGS = -DBOOST_TEST_DYN_LINK
 BOOST_TEST_LDFLAGS = -L/usr/local/lib -lboost_unit_test_framework
 
