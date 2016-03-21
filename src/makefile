@@ -1,4 +1,4 @@
-.DEFAULT_GOAL = lib
+.DEFAULT_GOAL = null
 
 CXX = clang++
 CXXFLAGS = -Wall -std=c++11 
@@ -16,6 +16,9 @@ clean:
 
 lib:
 	$(CXX) $(CXXFLAGS) sequential_analysis.cpp $(LDFLAGS) -shared -o libsequentialanalysis.so
+
+null:
+	echo ""
 
 test:
 	$(CXX) $(CXXFLAGS) $(BOOST_TEST_CXXFLAGS) -c -o sequential_analysis.cpp.o sequential_analysis.cpp
