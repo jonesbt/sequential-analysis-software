@@ -1,6 +1,6 @@
-Package: jsj2015
-Version: 2015-12.16
-Date: 2015-12-16
+Package: jsj2016
+Version: 2016-03.31
+Date: 2016-03-21
 Title: Sequential Analysis Supplementary Materials
 Authors@R: c(person("Benjamin", "Jones", role = c("aut", "cre"),
     email = "btjones16@gmail.com"),
@@ -22,6 +22,8 @@ Collate:
     'connectivity_matrices.R'
     'objective_functions.R'
     'optimization_functions.R'
+Depends:
+    gtools
 Suggests:
     testthat
 RoxygenNote: 5.0.1
