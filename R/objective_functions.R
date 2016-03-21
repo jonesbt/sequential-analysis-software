@@ -26,11 +26,11 @@ cv.beta <- function(alpha, beta) {
     return(sd.beta(alpha, beta) / mu.beta(alpha, beta))
 }
 
-#' Computes 1 - f(delta, alpha_i, alpha_0), where f(delta, alpha_i, alpha_0)
-#' is the CDF of the beta distribution with shape parameters alpha_i and alpha_0
+#' Computes 1 - f(delta, alpha, beta), where f(delta, alpha, beta)
+#' is the CDF of the beta distribution with shape parameters alpha and beta
 #' evaluated at delta. This function is private to this file.
-compute_prob = function(alpha_0, alpha_i, delta) {
-    return(1 - pbeta(delta, alpha_i, alpha_0))
+compute_prob = function(delta, alpha, beta) {
+    return(1 - pbeta(delta, alpha, beta))
 }
 
 #' Compute the objective function that is described in the text.
@@ -60,7 +60,8 @@ obj_fn_probabilities = function(alphas, obj_fn_args, by_site=FALSE) {
     for(i in seq(nrow(alphas)))
         for(j in seq(ncol(alphas)))
             if((alphas[i,j] / sum(alphas[i,])) < delta)
-                probs[i,j] = compute_prob(delta, sum(alphas[i,]), alphas[i,j])
+                probs[i,j] = compute_prob(delta, alphas[i,j],
+                                          sum(alphas[i,]) - alphas[i,j])
     probs[is.na(probs)] = 1
     cvs[cvs < epsilon] = 0 # Condition 1
     cvs[probs < pi] = 0 # Condition 2
