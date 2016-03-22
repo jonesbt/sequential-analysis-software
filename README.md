@@ -27,7 +27,7 @@ that implements unit tests for the library.
 Paste the below command at a Terminal prompt. The script explains any changes
 that it will make, then pauses prior to installing any new software.
 ```
-/bin/bash curl -fsSL https://raw.githubusercontent.com/btjones16/sequential-analysis-software/master/install.sh
+curl -O -fsSL https://raw.githubusercontent.com/btjones16/sequential-analysis-software/master/install.sh && /bin/bash install.sh
 ```
 
 #### Windows
