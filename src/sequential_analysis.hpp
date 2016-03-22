@@ -2,7 +2,6 @@
 #define __INCLUDE_SEQUENTIAL_ANALYSIS_HPP__
 
 #include <string>
-#include <sys/types.h>
 #include <vector>
 
 class ConnectivityMatrix {
@@ -27,15 +26,15 @@ public:
    * \return A vector giving the number of particles to release from each origin
    * site.
    */
-  std::vector<uint> allocate(const uint n);
+  std::vector<int> allocate(const int n);
 
   /** Returns the matrix of counts. Each element count[i][j] is equal to the 
    * total number of particles that were released from origin i and arrived at
    * destination j. */
-  inline std::vector< std::vector<uint> > get_counts() const {
+  inline std::vector< std::vector<int> > get_counts() const {
     return this->counts;
   }
-  
+
   /** Computes the coefficient of variance based objective function as given
    * below. 
    *
@@ -58,7 +57,7 @@ public:
    * \param The newly observed counts, where counts[i][j] gives the number of 
    * particles released from origin i and arriving at destination j.
    */
-  void update(const std::vector< std::vector<uint> > counts);
+  void update(const std::vector< std::vector<int> > counts);
 private:
   /** Creates a copy of this connectivity matrix. */
   ConnectivityMatrix(const ConnectivityMatrix &conn_mat);
@@ -66,26 +65,26 @@ private:
    *
    * \param n The number of particles to allocate.
    */
-  std::vector<uint> allocate_uniform(const uint n);
+  std::vector<int> allocate_uniform(const int n);
   /** Allocates the particles across the origin sites, attempting to minimize 
    * the posterior expected value of the objective function.
    *
    * \param n The number of particles to allocate.
    */
-  std::vector<uint> allocate_optimized(const uint n);
+  std::vector<int> allocate_optimized(const int n);
   /** Computes the expected value of the objective function if n additional
    * particles were to be allocated from origin i. 
    * 
    * \param i The release site for the new particles.
    * \param n The number of new particles to release.
    */
-  double expected_obj_fn_cv(const uint i, const uint n);
+  double expected_obj_fn_cv(const int i, const int n);
   /** Computes the coefficient of variation based objective function for origin
    * i. See ConnectivityMatrix::obj_fn_cv() for details. 
    *
    * \param i The origin for which the objective function should be computed.
    */
-  double obj_fn_cv(const uint i);
+  double obj_fn_cv(const int i);
   /* Returns the origin sites. */
   inline std::vector<std::string> get_origins() const { return origins; }
   /* Returns the destination sites. */
@@ -98,7 +97,7 @@ private:
   std::vector<std::string> destinations;
   /** The counts. counts[i][j] is the number of particles released from origin
    * i that arrived at destination j. */
-  std::vector< std::vector<uint> > counts;
+  std::vector< std::vector<int> > counts;
   /** The parameter delta for ConnectivityMatrix::obj_fn_cv(). */
   double delta;
   /** The parameter pi for ConnectivityMatrix::obj_fn_cv(). */

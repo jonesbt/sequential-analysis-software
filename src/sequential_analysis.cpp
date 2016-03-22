@@ -3,6 +3,7 @@
 #include <gsl/gsl_rng.h>
 #include <math.h>
 #include <numeric>
+#include <sys/types.h>
 #include "sequential_analysis.hpp"
 
 ConnectivityMatrix::ConnectivityMatrix(
@@ -34,7 +35,7 @@ ConnectivityMatrix::ConnectivityMatrix(const ConnectivityMatrix & conn_mat) {
   pi = 0.05;
 }
 
-std::vector<uint> ConnectivityMatrix::allocate(const uint n) {
+std::vector<int> ConnectivityMatrix::allocate(const int n) {
   /* Compute the total number of particles thus far. */
   int total_particles = 0;
   for(uint i = 0; i < origins.size(); ++i)
@@ -43,14 +44,14 @@ std::vector<uint> ConnectivityMatrix::allocate(const uint n) {
     this->allocate_optimized(n);
 }
 
-std::vector<uint> ConnectivityMatrix::allocate_uniform(const uint n) {
+std::vector<int> ConnectivityMatrix::allocate_uniform(const int n) {
   /* Create a vector to store the allocation. */
-  std::vector<uint> allocation(origins.size(), 0);
+  std::vector<int> allocation(origins.size(), 0);
   /* Assign the rounded down number of particles to each origin. */
   allocation.assign(allocation.size(), n / allocation.size());
   /* Fill in the remaining particles one at a time. */
-  uint total_assigned = (n / allocation.size()) * allocation.size();
-  uint i = 0;
+  int total_assigned = (n / allocation.size()) * allocation.size();
+  int i = 0;
   while(total_assigned < n) {
     ++allocation[i++];
     ++total_assigned;
@@ -59,9 +60,9 @@ std::vector<uint> ConnectivityMatrix::allocate_uniform(const uint n) {
   return allocation;
 }
 
-std::vector<uint> ConnectivityMatrix::allocate_optimized(const uint n) {
+std::vector<int> ConnectivityMatrix::allocate_optimized(const int n) {
   /* Create a vector to store the allocation. */
-  std::vector<uint> allocation(origins.size(), 0);
+  std::vector<int> allocation(origins.size(), 0);
   /* Create vectors to store the prior costs and the expected posterior costs.*/
   std::vector<double> prior_costs(origins.size(), 0.);
   std::vector<double> exp_costs(origins.size(), 0.);
@@ -117,13 +118,13 @@ std::vector<uint> ConnectivityMatrix::allocate_optimized(const uint n) {
   return allocation;  
 }
 
-void ConnectivityMatrix::update(const std::vector< std::vector<uint> > counts) {
+void ConnectivityMatrix::update(const std::vector< std::vector<int> > counts) {
   for(uint i = 0; i < counts.size(); ++i)
     for(uint j = 0; j < counts[i].size(); ++j)
       this->counts[i][j] += counts[i][j];
 }
 
-double ConnectivityMatrix::expected_obj_fn_cv(const uint i, const uint n) {
+double ConnectivityMatrix::expected_obj_fn_cv(const int i, const int n) {
   /* Create a random number generator. Use the Mersenne-Twister (default in R).
    */
   gsl_rng * rng = gsl_rng_alloc(gsl_rng_mt19937);
@@ -142,11 +143,14 @@ double ConnectivityMatrix::expected_obj_fn_cv(const uint i, const uint n) {
     std::vector<double> p(destinations.size(), 0.);
     gsl_ran_dirichlet(rng, destinations.size(), alpha.data(), p.data());
     /* Generate a random sample for where these particles go. */
-    std::vector< std::vector<uint> >new_counts(origins.size(),
-      std::vector<uint>(destinations.size(), 0));
-    gsl_ran_multinomial(rng, destinations.size(), n, p.data(),
-    			new_counts[i].data());
+    std::vector<uint> dest(destinations.size(), 0);
+    gsl_ran_multinomial(rng, destinations.size(), (uint) n, p.data(),
+    			dest.data());
     /* Update the counts. */
+    std::vector< std::vector<int> >new_counts(origins.size(),
+      std::vector<int>(destinations.size(), 0));
+    for(uint j = 0; j < destinations.size(); ++j)
+      new_counts[i][j] = (int) dest[j];
     conn_mat.update(new_counts);
     /* Compute the cost with the updated counts. */
     costs[r] = conn_mat.obj_fn_cv(i);
@@ -183,7 +187,7 @@ double ConnectivityMatrix::obj_fn_cv() {
   return max_cv;
 }
 
-double ConnectivityMatrix::obj_fn_cv(const uint i) {
+double ConnectivityMatrix::obj_fn_cv(const int i) {
   double max_cv = 0.;
   const double alpha_sum = (double)
     (std::accumulate(counts[i].begin(), counts[i].end(), 0) + counts[i].size());
