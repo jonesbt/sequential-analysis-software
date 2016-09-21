@@ -1,4 +1,4 @@
-%module pysa
+%module sequential_analysis_wrap
 %{
 #include "sequential_analysis.hpp"
 %}

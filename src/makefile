@@ -19,8 +19,7 @@ clean:
 	rm -f libsequentialanalysis.so
 	rm -f test_sequential_analysis
 	rm -f sequential_analysis.py
-	rm -f sequential_analysis_wrap.cxx
-	rm -f pysa.* _pysa.so
+	rm -f sequential_analysis_wrap.*
 
 lib:
 	$(CXX) $(CXXFLAGS) sequential_analysis.cpp $(LDFLAGS) -shared -o libsequentialanalysis.so
@@ -32,7 +31,11 @@ python:
 	swig -v -c++ -python sequential_analysis.i
 	$(CXX) $(CXXFLAGS) -c -o sequential_analysis.cpp.o sequential_analysis.cpp
 	$(CXX) $(CXXFLAGS) $(PYTHON_CXXFLAGS) -c -o sequential_analysis_wrap.cxx.o sequential_analysis_wrap.cxx
-	$(LD) $(LDFLAGS) $(PYTHON_LDFLAGS) -shared sequential_analysis.cpp.o sequential_analysis_wrap.cxx.o -o _pysa.so
+	$(LD) $(LDFLAGS) $(PYTHON_LDFLAGS) -shared sequential_analysis.cpp.o sequential_analysis_wrap.cxx.o -o _sequential_analysis_wrap.so
+
+r:
+	swig -c++ -r -o sequential_analysis_wrap.cpp sequential_analysis.i
+	PKG_LIBS="sequential_analysis.cpp $(LDFLAGS)" R CMD SHLIB sequential_analysis_wrap.cpp
 
 test:
 	$(CXX) $(CXXFLAGS) -c -o sequential_analysis.cpp.o sequential_analysis.cpp

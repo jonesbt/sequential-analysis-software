@@ -53,8 +53,8 @@ SWIG documentation for details on modifying the target for other languages.
 cd src && make python
 # Import the package and create a connectivity matrix.
 python
-import pysa
-cm = pysa.ConnectivityMatrix(
+import sequential_analysis_wrap
+cm = sequential_analysis_wrap.ConnectivityMatrix(
     ['Origin 0', 'Origin 1'],
     ['Destination 0', 'Destination 1', 'Destination 2']
 )
