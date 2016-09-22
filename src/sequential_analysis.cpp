@@ -176,7 +176,6 @@ double ConnectivityMatrix::expected_obj_fn_cv(const int i, const int n) {
   for(uint r = 0; r < n_reps; ++r) {
     /* Create a connectivity matrix using the original counts. */
     clock_st = clock();
-    ConnectivityMatrix conn_mat(*this);
     clock_end = clock();
     cmcopy_ct += (clock_end - clock_st);
     /* Generate a probability vector by drawing from a Dirichlet distribution.*/
@@ -197,14 +196,18 @@ double ConnectivityMatrix::expected_obj_fn_cv(const int i, const int n) {
     std::vector<int>new_counts(destinations.size(), 0);
     for(uint j = 0; j < destinations.size(); ++j)
       new_counts[j] = (int) dest[j];
-    conn_mat.update(i, new_counts);
+    this->update(i, new_counts);
     clock_end = clock();
     update_ct += (clock_end - clock_st);
     /* Compute the cost with the updated counts. */
     clock_st = clock();
-    costs[r] = conn_mat.obj_fn_cv(i);
+    costs[r] = this->obj_fn_cv(i);
     clock_end = clock();
     objfn_ct += (clock_end - clock_st);
+    /* Remove the updated counts. */
+    for(int j = 0; j < new_counts.size(); ++j)
+      new_counts[j] = -new_counts[j];
+    this->update(i, new_counts);
   }
   clock_it_end = clock();
   const double iter_time = (double) (clock_it_end - clock_it_st) /
