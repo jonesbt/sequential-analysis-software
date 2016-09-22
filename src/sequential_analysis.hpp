@@ -58,6 +58,14 @@ public:
    * particles released from origin i and arriving at destination j.
    */
   void update(const std::vector< std::vector<int> > counts);
+  /** Updates the connectivity matrix to include the newly observed data by 
+   * adding the counts to the existing ones. 
+   *
+   * \param The index of the origin for which the counts are being provided.
+   * \param The newly observed counts, where counts[j] gives the number of 
+   * particles released from origin i and arriving at destination j.
+   */
+  void update(const int i, const std::vector<int> counts);
 private:
   /** Creates a copy of this connectivity matrix. */
   ConnectivityMatrix(const ConnectivityMatrix &conn_mat);
