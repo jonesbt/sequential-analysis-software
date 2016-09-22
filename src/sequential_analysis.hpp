@@ -23,10 +23,11 @@ public:
    * expected posterior value of the objective function.
    *
    * \param n The number of particles in this batch to allocate.
+   * \param block_size The number of particles to allocate as a block.
    * \return A vector giving the number of particles to release from each origin
    * site.
    */
-  std::vector<int> allocate(const int n);
+  std::vector<int> allocate(const int n, const int block_size=1);
 
   /** Returns the matrix of counts. Each element count[i][j] is equal to the 
    * total number of particles that were released from origin i and arrived at
@@ -78,8 +79,9 @@ private:
    * the posterior expected value of the objective function.
    *
    * \param n The number of particles to allocate.
+   * \param block_size The number of particles to allocate as a block.
    */
-  std::vector<int> allocate_optimized(const int n);
+  std::vector<int> allocate_optimized(const int n, const int block_size);
   /** Computes the expected value of the objective function if n additional
    * particles were to be allocated from origin i. 
    * 

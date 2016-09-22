@@ -35,13 +35,14 @@ ConnectivityMatrix::ConnectivityMatrix(const ConnectivityMatrix & conn_mat) {
   pi = 0.05;
 }
 
-std::vector<int> ConnectivityMatrix::allocate(const int n) {
+std::vector<int> ConnectivityMatrix::allocate(const int n,
+					      const int block_size) {
   /* Compute the total number of particles thus far. */
   int total_particles = 0;
   for(uint i = 0; i < origins.size(); ++i)
     total_particles += std::accumulate(counts[i].begin(), counts[i].end(), 0);
   return total_particles == 0 ? this->allocate_uniform(n) :
-    this->allocate_optimized(n);
+    this->allocate_optimized(n, block_size);
 }
 
 std::vector<int> ConnectivityMatrix::allocate_uniform(const int n) {
@@ -60,7 +61,8 @@ std::vector<int> ConnectivityMatrix::allocate_uniform(const int n) {
   return allocation;
 }
 
-std::vector<int> ConnectivityMatrix::allocate_optimized(const int n) {
+std::vector<int> ConnectivityMatrix::allocate_optimized(const int n,
+							const int block_size) {
   /* Create a vector to store the allocation. */
   std::vector<int> allocation(origins.size(), 0);
   /* Create vectors to store the prior costs and the expected posterior costs.*/
@@ -68,16 +70,16 @@ std::vector<int> ConnectivityMatrix::allocate_optimized(const int n) {
   std::vector<double> exp_costs(origins.size(), 0.);
   for(uint i = 0; i < prior_costs.size(); ++i) {
     prior_costs[i] = this->obj_fn_cv(i);
-    exp_costs[i] = this->expected_obj_fn_cv(i, 1);
+    exp_costs[i] = this->expected_obj_fn_cv(i, block_size);
   }
   /* Iterate through the particles. */
   int release_site = -1;
-  for(uint i = 0; i < n; ++i) {
+  for(uint i = 0; i < n; i += block_size) {
     /* Update the costs if necessary. */
     if(release_site != -1) {
       prior_costs[release_site] = exp_costs[release_site];
       exp_costs[release_site] = this->expected_obj_fn_cv(release_site,
-        allocation[release_site] + 1);
+        allocation[release_site] + block_size);
     }
     /* Compute the larger of the prior or expected cost for each site. This 
      * corrects for objective functions that do not monotonically increase. */
@@ -112,8 +114,15 @@ std::vector<int> ConnectivityMatrix::allocate_optimized(const int n) {
         std::max_element(prior_costs.begin(), prior_costs.end()));
     }
     /* Release the particle from the site that minimizes the expected cost. */
-    ++allocation[release_site];
+    allocation[release_site] += block_size;
   }
+  /* Any extra particles are allocated uniformly. */
+  const int n_released =
+    std::accumulate(allocation.begin(), allocation.end(), 0);
+  const int n_extra = n - n_released;
+  std::vector<int> extra_alloc = allocate_uniform(n_extra);
+  for(int i = 0; i < allocation.size(); ++i)
+    allocation[i] += extra_alloc[i];
   /* Return the allocation. */
   return allocation;  
 }

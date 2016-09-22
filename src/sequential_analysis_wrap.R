@@ -2460,7 +2460,7 @@ class(`ConnectivityMatrix__SWIG_2`) = c("SWIGFunction", class('ConnectivityMatri
 # Dispatch function
 # Start of ConnectivityMatrix_allocate
 
-`ConnectivityMatrix_allocate` = function(self, n, .copy = FALSE)
+`ConnectivityMatrix_allocate__SWIG_0` = function(self, n, block_size, .copy = FALSE)
 {
   if (inherits(self, "ExternalReference")) self = slot(self,"ref") 
   n = as.integer(n);
@@ -2469,7 +2469,13 @@ class(`ConnectivityMatrix__SWIG_2`) = c("SWIGFunction", class('ConnectivityMatri
     warning("using only the first element of n");
   };
   
-  ;ans = .Call('R_swig_ConnectivityMatrix_allocate', self, n, as.logical(.copy), PACKAGE='sequential_analysis_wrap');
+  block_size = as.integer(block_size);
+  
+  if(length(block_size) > 1) {
+    warning("using only the first element of block_size");
+  };
+  
+  ;ans = .Call('R_swig_ConnectivityMatrix_allocate__SWIG_0', self, n, block_size, as.logical(.copy), PACKAGE='sequential_analysis_wrap');
   return(ans)
   ans <- new("_p_std__vectorT_int_std__allocatorT_int_t_t", ref=ans);
   
@@ -2477,10 +2483,53 @@ class(`ConnectivityMatrix__SWIG_2`) = c("SWIGFunction", class('ConnectivityMatri
   
 }
 
-attr(`ConnectivityMatrix_allocate`, 'returnType') = 'integer'
-attr(`ConnectivityMatrix_allocate`, "inputTypes") = c('_p_ConnectivityMatrix', 'integer')
-class(`ConnectivityMatrix_allocate`) = c("SWIGFunction", class('ConnectivityMatrix_allocate'))
+attr(`ConnectivityMatrix_allocate__SWIG_0`, 'returnType') = 'integer'
+attr(`ConnectivityMatrix_allocate__SWIG_0`, "inputTypes") = c('_p_ConnectivityMatrix', 'integer', 'integer')
+class(`ConnectivityMatrix_allocate__SWIG_0`) = c("SWIGFunction", class('ConnectivityMatrix_allocate__SWIG_0'))
 
+# Start of ConnectivityMatrix_allocate
+
+`ConnectivityMatrix_allocate__SWIG_1` = function(self, n, .copy = FALSE)
+{
+  if (inherits(self, "ExternalReference")) self = slot(self,"ref") 
+  n = as.integer(n);
+  
+  if(length(n) > 1) {
+    warning("using only the first element of n");
+  };
+  
+  ;ans = .Call('R_swig_ConnectivityMatrix_allocate__SWIG_1', self, n, as.logical(.copy), PACKAGE='sequential_analysis_wrap');
+  return(ans)
+  ans <- new("_p_std__vectorT_int_std__allocatorT_int_t_t", ref=ans);
+  
+  ans
+  
+}
+
+attr(`ConnectivityMatrix_allocate__SWIG_1`, 'returnType') = 'integer'
+attr(`ConnectivityMatrix_allocate__SWIG_1`, "inputTypes") = c('_p_ConnectivityMatrix', 'integer')
+class(`ConnectivityMatrix_allocate__SWIG_1`) = c("SWIGFunction", class('ConnectivityMatrix_allocate__SWIG_1'))
+
+`ConnectivityMatrix_allocate` <- function(...) {
+  argtypes <- mapply(class, list(...));
+  argv <- list(...);
+  argc <- length(argtypes);
+# dispatch functions 2
+  if (argc == 2) {
+    if (extends(argtypes[1], '_p_ConnectivityMatrix') && ( (is.integer(argv[[2]]) || is.numeric(argv[[2]])) && length(argv[[2]]) == 1 )) {
+      f <- ConnectivityMatrix_allocate__SWIG_1; 
+    }
+  } else if (argc == 3) {
+    if (extends(argtypes[1], '_p_ConnectivityMatrix') && ( (is.integer(argv[[2]]) || is.numeric(argv[[2]])) && length(argv[[2]]) == 1 ) && ( (is.integer(argv[[3]]) || is.numeric(argv[[3]])) && length(argv[[3]]) == 1 )) {
+      f <- ConnectivityMatrix_allocate__SWIG_0; 
+    }
+  } else {
+    stop("cannot find overloaded function for ConnectivityMatrix_allocate with argtypes (",toString(argtypes),")");
+  };
+  f(...);
+}
+
+# Dispatch function
 # Start of ConnectivityMatrix_get_counts
 
 `ConnectivityMatrix_get_counts` = function(self, .copy = FALSE)
