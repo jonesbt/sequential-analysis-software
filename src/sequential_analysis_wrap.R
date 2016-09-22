@@ -2472,6 +2472,7 @@ class(`ConnectivityMatrix__SWIG_2`) = c("SWIGFunction", class('ConnectivityMatri
   ;ans = .Call('R_swig_ConnectivityMatrix_allocate', self, n, as.logical(.copy), PACKAGE='sequential_analysis_wrap');
   return(ans)
   ans <- new("_p_std__vectorT_int_std__allocatorT_int_t_t", ref=ans);
+  
   ans
   
 }
@@ -2523,18 +2524,58 @@ class(`ConnectivityMatrix_set_obj_fn_cv_args`) = c("SWIGFunction", class('Connec
 
 # Start of ConnectivityMatrix_update
 
-`ConnectivityMatrix_update` = function(self, counts)
+`ConnectivityMatrix_update__SWIG_0` = function(self, counts)
 {
   if (inherits(self, "ExternalReference")) self = slot(self,"ref") 
   counts = lapply(counts, as.integer);
-  ;.Call('R_swig_ConnectivityMatrix_update', self, counts, PACKAGE='sequential_analysis_wrap');
+  ;.Call('R_swig_ConnectivityMatrix_update__SWIG_0', self, counts, PACKAGE='sequential_analysis_wrap');
   
 }
 
-attr(`ConnectivityMatrix_update`, 'returnType') = 'void'
-attr(`ConnectivityMatrix_update`, "inputTypes") = c('_p_ConnectivityMatrix', 'list')
-class(`ConnectivityMatrix_update`) = c("SWIGFunction", class('ConnectivityMatrix_update'))
+attr(`ConnectivityMatrix_update__SWIG_0`, 'returnType') = 'void'
+attr(`ConnectivityMatrix_update__SWIG_0`, "inputTypes") = c('_p_ConnectivityMatrix', 'list')
+class(`ConnectivityMatrix_update__SWIG_0`) = c("SWIGFunction", class('ConnectivityMatrix_update__SWIG_0'))
 
+# Start of ConnectivityMatrix_update
+
+`ConnectivityMatrix_update__SWIG_1` = function(self, i, counts)
+{
+  if (inherits(self, "ExternalReference")) self = slot(self,"ref") 
+  i = as.integer(i);
+  
+  if(length(i) > 1) {
+    warning("using only the first element of i");
+  };
+  
+  counts = as.integer(counts);
+  ;.Call('R_swig_ConnectivityMatrix_update__SWIG_1', self, i, counts, PACKAGE='sequential_analysis_wrap');
+  
+}
+
+attr(`ConnectivityMatrix_update__SWIG_1`, 'returnType') = 'void'
+attr(`ConnectivityMatrix_update__SWIG_1`, "inputTypes") = c('_p_ConnectivityMatrix', 'integer', 'integer')
+class(`ConnectivityMatrix_update__SWIG_1`) = c("SWIGFunction", class('ConnectivityMatrix_update__SWIG_1'))
+
+`ConnectivityMatrix_update` <- function(...) {
+  argtypes <- mapply(class, list(...));
+  argv <- list(...);
+  argc <- length(argtypes);
+# dispatch functions 2
+  if (argc == 2) {
+    if (extends(argtypes[1], '_p_ConnectivityMatrix') && ( is.list(argv[[2]]) && all(sapply(argv[[2]] , is.integer) || sapply(argv[[2]], is.numeric)) )) {
+      f <- ConnectivityMatrix_update__SWIG_0; 
+    }
+  } else if (argc == 3) {
+    if (extends(argtypes[1], '_p_ConnectivityMatrix') && ( (is.integer(argv[[2]]) || is.numeric(argv[[2]])) && length(argv[[2]]) == 1 ) && ( is.integer(argv[[3]]) || is.numeric(argv[[3]]) )) {
+      f <- ConnectivityMatrix_update__SWIG_1; 
+    }
+  } else {
+    stop("cannot find overloaded function for ConnectivityMatrix_update with argtypes (",toString(argtypes),")");
+  };
+  f(...);
+}
+
+# Dispatch function
 # Start of delete_ConnectivityMatrix
 
 `delete_ConnectivityMatrix` = function(self)

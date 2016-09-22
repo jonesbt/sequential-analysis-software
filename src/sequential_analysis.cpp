@@ -6,9 +6,6 @@
 #include <sys/types.h>
 #include "sequential_analysis.hpp"
 
-#include <time.h>
-#include <stdio.h>
-
 ConnectivityMatrix::ConnectivityMatrix(
   const std::vector<std::string> origins,
   const std::vector<std::string> destinations) {
@@ -64,34 +61,16 @@ std::vector<int> ConnectivityMatrix::allocate_uniform(const int n) {
 }
 
 std::vector<int> ConnectivityMatrix::allocate_optimized(const int n) {
-  clock_t start, end, start0, start1, end0, end1; // TIMING
-  unsigned long ct0 = 0;
-  unsigned long ct1 = 0;
   /* Create a vector to store the allocation. */
-  start = clock();
   std::vector<int> allocation(origins.size(), 0);
   /* Create vectors to store the prior costs and the expected posterior costs.*/
   std::vector<double> prior_costs(origins.size(), 0.);
   std::vector<double> exp_costs(origins.size(), 0.);
   for(uint i = 0; i < prior_costs.size(); ++i) {
-    start0 = clock();
     prior_costs[i] = this->obj_fn_cv(i);
-    end0 = clock();
-    ct0 += (end0 - start0);
-    start1 = clock();
     exp_costs[i] = this->expected_obj_fn_cv(i, 1);
-    end1 = clock();
-    ct1 += (end1 - start1);
   }
-  printf("Clock 0 recorded %f seconds.\n",
-	 ((double) ct0) / CLOCKS_PER_SEC);
-  printf("Clock 1 recorded %f seconds.\n",
-	 ((double) ct1) / CLOCKS_PER_SEC);
-  end = clock();
-  printf("Initial computation used %f seconds\n",
-	 ((double) (end - start)) / CLOCKS_PER_SEC);
   /* Iterate through the particles. */
-  start = clock();
   int release_site = -1;
   for(uint i = 0; i < n; ++i) {
     /* Update the costs if necessary. */
@@ -135,9 +114,6 @@ std::vector<int> ConnectivityMatrix::allocate_optimized(const int n) {
     /* Release the particle from the site that minimizes the expected cost. */
     ++allocation[release_site];
   }
-  end = clock();
-  printf("Allocation used %f seconds\n",
-	 ((double) (end - start)) / CLOCKS_PER_SEC);
   /* Return the allocation. */
   return allocation;  
 }
@@ -156,78 +132,35 @@ void ConnectivityMatrix::update(const int i, const std::vector<int> counts) {
 double ConnectivityMatrix::expected_obj_fn_cv(const int i, const int n) {
   /* Create a random number generator. Use the Mersenne-Twister (default in R).
    */
-  clock_t clock_st, clock_end, clock_it_st, clock_it_end;
   gsl_rng * rng = gsl_rng_alloc(gsl_rng_mt19937);
   const uint n_reps = 250;
   /* Compute the C.V. for each p_{ij}. */
   std::vector<double> costs(n_reps, 0.);
   std::vector<double> p_sum(5, 0);
   /* Convert the counts to the Dirichlet parameters. */
-  clock_st = clock();
   std::vector<double> alpha(counts[i].size(), 0.);
   for(uint j = 0; j < counts[i].size(); ++j)
     alpha[j] = (double) counts[i][j] + 1;
-  clock_end = clock();
-  printf("Alphas used %f seconds\n",
-	 ((double) (clock_end - clock_st)) / CLOCKS_PER_SEC);
-  clock_it_st = clock();
-  unsigned long cmcopy_ct = 0, dsamp_ct = 0, msamp_ct = 0, update_ct = 0,
-    objfn_ct = 0;
   for(uint r = 0; r < n_reps; ++r) {
-    /* Create a connectivity matrix using the original counts. */
-    clock_st = clock();
-    clock_end = clock();
-    cmcopy_ct += (clock_end - clock_st);
     /* Generate a probability vector by drawing from a Dirichlet distribution.*/
-    clock_st = clock();
     std::vector<double> p(destinations.size(), 0.);
     gsl_ran_dirichlet(rng, destinations.size(), alpha.data(), p.data());
-    clock_end = clock();
-    dsamp_ct += (clock_end - clock_st);
     /* Generate a random sample for where these particles go. */
-    clock_st = clock();
     std::vector<uint> dest(destinations.size(), 0);
     gsl_ran_multinomial(rng, destinations.size(), (uint) n, p.data(),
     			dest.data());
-    clock_end = clock();
-    msamp_ct += (clock_end - clock_st);
     /* Update the counts. */
-    clock_st = clock();
     std::vector<int>new_counts(destinations.size(), 0);
     for(uint j = 0; j < destinations.size(); ++j)
       new_counts[j] = (int) dest[j];
     this->update(i, new_counts);
-    clock_end = clock();
-    update_ct += (clock_end - clock_st);
     /* Compute the cost with the updated counts. */
-    clock_st = clock();
     costs[r] = this->obj_fn_cv(i);
-    clock_end = clock();
-    objfn_ct += (clock_end - clock_st);
     /* Remove the updated counts. */
     for(int j = 0; j < new_counts.size(); ++j)
       new_counts[j] = -new_counts[j];
     this->update(i, new_counts);
   }
-  clock_it_end = clock();
-  const double iter_time = (double) (clock_it_end - clock_it_st) /
-    CLOCKS_PER_SEC;
-  printf("Iteration used %f seconds\n", iter_time);
-  printf("CM Copy used %f seconds (%f%%).\n",
-	 ((double) cmcopy_ct / CLOCKS_PER_SEC),
-	 ((double) cmcopy_ct / CLOCKS_PER_SEC) / iter_time * 100.);
-  printf("Dir sample used %f seconds (%f%%).\n",
-	 ((double) dsamp_ct / CLOCKS_PER_SEC),
-	 ((double) dsamp_ct / CLOCKS_PER_SEC) / iter_time * 100.);
-  printf("Mult sample used %f seconds (%f%%).\n",
-	 ((double) msamp_ct / CLOCKS_PER_SEC),
-	 ((double) msamp_ct / CLOCKS_PER_SEC) / iter_time * 100.);
-  printf("Update used %f seconds (%f%%).\n",
-	 ((double) update_ct / CLOCKS_PER_SEC),
-	 ((double) update_ct / CLOCKS_PER_SEC) / iter_time * 100.);
-  printf("Obj fn used %f seconds (%f%%).\n",
-	 ((double) objfn_ct / CLOCKS_PER_SEC),
-	 ((double) objfn_ct / CLOCKS_PER_SEC) / iter_time * 100.);
   /* Cleanup the random number generator. */
   gsl_rng_free(rng);
   return std::accumulate(costs.begin(), costs.end(), 0.) / (double) n_reps;
