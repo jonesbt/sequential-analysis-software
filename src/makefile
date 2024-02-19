@@ -44,3 +44,5 @@ test:
 	$(CXX) $(CXXFLAGS) $(BOOST_TEST_CXXFLAGS) -c -o test_sequential_analysis.cpp.o test_sequential_analysis.cpp
 	$(LD) test_sequential_analysis.cpp.o sequential_analysis.cpp.o $(BOOST_TEST_LDFLAGS) $(LDFLAGS) -o test_sequential_analysis
 
+check: test
+	./test_sequential_analysis
