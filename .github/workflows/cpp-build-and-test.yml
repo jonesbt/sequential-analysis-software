@@ -13,6 +13,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    - name: Install dependencies
+      run: sudo apt-get install -y build-essential libboost-dev libgsl-dev python3-dev swig
     - name: build
       run: cd src && make lib
     - name: test
