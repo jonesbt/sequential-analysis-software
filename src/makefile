@@ -1,18 +1,18 @@
 .DEFAULT_GOAL = null
 
-CXX = clang++
-LD = clang++
-CXXFLAGS = -Wall -std=c++11 
+CXX = g++
+LD = g++
+CXXFLAGS = -Wall -std=c++14
 LDFLAGS = 
 
-CXXFLAGS += $(shell pkg-config --cflags gsl)
+CXXFLAGS += $(shell pkg-config --cflags gsl) -fPIC
 LDFLAGS += $(shell pkg-config --libs gsl)
 
 BOOST_TEST_CXXFLAGS = -DBOOST_TEST_DYN_LINK
 BOOST_TEST_LDFLAGS = -L/usr/local/lib -lboost_unit_test_framework
 
-PYTHON_CXXFLAGS = $(shell pkg-config --cflags python)
-PYTHON_LDFLAGS = $(shell pkg-config --libs python)
+PYTHON_CXXFLAGS = $(shell pkg-config --cflags python3)
+PYTHON_LDFLAGS = $(shell pkg-config --libs python3)
 
 clean:
 	rm -f *.o
@@ -22,6 +22,8 @@ clean:
 	rm -f sequential_analysis_wrap.*
 
 lib:
+	echo $(CXXFLAGS)
+	echo $(LDFLAGS)
 	$(CXX) $(CXXFLAGS) sequential_analysis.cpp $(LDFLAGS) -shared -o libsequentialanalysis.so
 
 null:
@@ -31,7 +33,7 @@ python:
 	swig -v -c++ -python sequential_analysis.i
 	$(CXX) $(CXXFLAGS) -c -o sequential_analysis.cpp.o sequential_analysis.cpp
 	$(CXX) $(CXXFLAGS) $(PYTHON_CXXFLAGS) -c -o sequential_analysis_wrap.cxx.o sequential_analysis_wrap.cxx
-	$(LD) $(LDFLAGS) $(PYTHON_LDFLAGS) -shared sequential_analysis.cpp.o sequential_analysis_wrap.cxx.o -o _sequential_analysis_wrap.so
+	$(LD) -shared sequential_analysis.cpp.o sequential_analysis_wrap.cxx.o $(LDFLAGS) $(PYTHON_LDFLAGS) -o _sequential_analysis_wrap.so
 
 r:
 	swig -c++ -r -o sequential_analysis_wrap.cpp sequential_analysis.i
@@ -40,5 +42,5 @@ r:
 test:
 	$(CXX) $(CXXFLAGS) -c -o sequential_analysis.cpp.o sequential_analysis.cpp
 	$(CXX) $(CXXFLAGS) $(BOOST_TEST_CXXFLAGS) -c -o test_sequential_analysis.cpp.o test_sequential_analysis.cpp
-	$(LD) $(LDFLAGS) $(BOOST_TEST_LDFLAGS) test_sequential_analysis.cpp.o sequential_analysis.cpp.o -o test_sequential_analysis
+	$(LD) test_sequential_analysis.cpp.o sequential_analysis.cpp.o $(BOOST_TEST_LDFLAGS) $(LDFLAGS) -o test_sequential_analysis
 
