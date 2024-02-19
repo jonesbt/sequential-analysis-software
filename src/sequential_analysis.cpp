@@ -74,7 +74,7 @@ std::vector<int> ConnectivityMatrix::allocate_optimized(const int n,
   }
   /* Iterate through the particles. */
   int release_site = -1;
-  for(uint i = 0; i < n; i += block_size) {
+  for(int i = 0; i < n; i += block_size) {
     /* Update the costs if necessary. */
     if(release_site != -1) {
       prior_costs[release_site] = exp_costs[release_site];
@@ -121,7 +121,7 @@ std::vector<int> ConnectivityMatrix::allocate_optimized(const int n,
     std::accumulate(allocation.begin(), allocation.end(), 0);
   const int n_extra = n - n_released;
   std::vector<int> extra_alloc = allocate_uniform(n_extra);
-  for(int i = 0; i < allocation.size(); ++i)
+  for(uint i = 0; i < allocation.size(); ++i)
     allocation[i] += extra_alloc[i];
   /* Return the allocation. */
   return allocation;  
@@ -166,7 +166,7 @@ double ConnectivityMatrix::expected_obj_fn_cv(const int i, const int n) {
     /* Compute the cost with the updated counts. */
     costs[r] = this->obj_fn_cv(i);
     /* Remove the updated counts. */
-    for(int j = 0; j < new_counts.size(); ++j)
+    for(uint j = 0; j < new_counts.size(); ++j)
       new_counts[j] = -new_counts[j];
     this->update(i, new_counts);
   }
