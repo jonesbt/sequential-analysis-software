@@ -14,7 +14,9 @@
 *.o
 src/test_sequential_analysis
 src/libsequentialanalysis.so
+src/__pycache__
 
 # Swig generated files.
 src/sequential_analysis_wrap.cxx
-src/sequential_analysis.py
+src/sequential_analysis_wrap.py
+src/_sequential_analysis_wrap.so
