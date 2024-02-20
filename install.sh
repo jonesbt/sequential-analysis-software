@@ -41,7 +41,7 @@ echo "All of the dependencies have been installed, moving on to the library..."
 
 # Download the source code.
 read -n 1 -s -p "Downloading the source code, press any key to continue or Ctrl-C to quit..."
-git clone ssh://git@github.com/btjones16/sequential-analysis-software
+git clone ssh://git@github.com/jonesbt/sequential-analysis-software
 # Build the library.
 read -n 1 -s -p "Building the library, press any key to continue or Ctrl-C to quit..."
 cd sequential-analysis-software/src
